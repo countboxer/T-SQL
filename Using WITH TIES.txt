@@ -1,0 +1,59 @@
+CREATE TABLE #TopExample (
+	GradeAverage int,
+	Student varchar(100)
+)
+
+INSERT #TopExample VALUES
+	(99,'Plato'),
+	(98,'Socrates'),
+	(95,'Diogenes the Cynic'),
+	(94,'Antisthenes'),
+	(94,'Demetrius'),
+	(50,'Denis')
+
+SELECT * FROM #TopExample
+
+DROP TABLE #TopExample
+
+----------
+
+SELECT TOP 4
+	GradeAverage,
+	Student
+FROM
+	#TopExample
+ORDER BY
+	GradeAverage DESC
+
+SELECT TOP 4 WITH TIES
+	GradeAverage,
+	Student
+FROM
+	#TopExample
+ORDER BY
+	GradeAverage DESC
+
+----------
+
+-- Another way to do the same as WITH TIES is by using DENSE_RANK
+
+WITH c AS (
+	SELECT
+		DENSE_RANK() OVER (ORDER BY GradeAverage DESC) AS dens,
+ 		GradeAverage,
+		Student
+	FROM
+		#TopExample
+)
+
+-- SELECT * FROM c
+
+SELECT
+	GradeAverage,
+	Student
+FROM
+	c
+WHERE
+	dens <=4
+ORDER BY
+	GradeAverage DESC
